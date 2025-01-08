@@ -1,0 +1,23 @@
+{
+  "name": "testing",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "npx electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4raff/testing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/4raff/testing/issues"
+  },
+  "homepage": "https://github.com/4raff/testing#readme",
+  "description": "",
+  "dependencies": {
+    "electron": "^25.3.1"
+  }
+}
