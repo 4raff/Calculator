@@ -1,16 +1,23 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 400, // Increased width
+    height: 600, // Increased height
+    resizable: true, // Enable resizing
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: true
+    },
+    icon: path.join(__dirname, 'assets', 'icon.ico')
   })
 
   win.loadFile('index.html')
+
+  // Remove the default menu
+  Menu.setApplicationMenu(null)
 }
 
 app.whenReady().then(() => {

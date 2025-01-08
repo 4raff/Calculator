@@ -1,23 +1,54 @@
 {
   "name": "testing",
   "version": "1.0.0",
+  "description": "Kalkulator broski",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "package": "electron-packager . TestingApp --platform=win32 --arch=x64 --icon=assets/icon.ico --out=dist",
+    "build": "electron-builder"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/4raff/testing.git"
   },
-  "author": "",
+  "author": "Your Name <your-email@example.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/4raff/testing/issues"
   },
   "homepage": "https://github.com/4raff/testing#readme",
-  "description": "",
-  "dependencies": {
-    "electron": "^25.9.8"
+  "devDependencies": {
+    "electron-builder": "^24.6.0",
+    "electron-packager": "^17.1.1"
+  },
+  "build": {
+    "appId": "com.testing.kalkulatorbroski",
+    "productName": "Kalkulator Broski",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "assets/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "assets/icon.png"
+    }
   }
 }

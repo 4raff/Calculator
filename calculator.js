@@ -1,85 +1,119 @@
-const display = document.getElementById("display");
+// Ambil elemen-elemen DOM
+const display = document.getElementById('display');
+const buttons = document.querySelectorAll('.button');
+const clearButton = document.getElementById('clear');
+const backspaceButton = document.getElementById('backspace');
+const equalsButton = document.getElementById('equals');
 
-// Fungsi untuk menambahkan input ke layar
-function appendToDisplay(input) {
-    // Jika layar hanya menampilkan 0, ganti dengan input pertama (kecuali operator)
-    if (display.value === "0" && !["+", "-", "*", "/", "%", "."].includes(input)) {
-        display.value = input;
-    } else if (["+", "-", "*", "/", "%"].includes(input)) {
-        // Jangan tambahkan operator dua kali berturut-turut
-        if (!/[\+\-\*/%]$/.test(display.value)) {
-            display.value += input;
-        }
-    } else {
-        // Cegah lebih dari satu titik desimal di angka yang sama
-        if (input === "." && /(\.\d*)$/.test(display.value)) {
-            return;
-        }
-        display.value += input;
+// Variabel untuk menyimpan operasi dan angka
+let currentInput = '';
+let previousInput = '';
+let operator = null;
+
+// Fungsi untuk memperbarui layar
+function updateDisplay(value) {
+    display.value = value;
+}
+
+// Fungsi untuk menangani klik tombol angka dan desimal
+function appendNumber(number) {
+    if (number === '.' && currentInput.includes('.')) return;
+    currentInput += number;
+    updateDisplay(currentInput);
+}
+
+// Fungsi untuk menangani operator
+function chooseOperator(op) {
+    if (currentInput === '' && previousInput === '') return;
+    if (previousInput !== '') {
+        calculate();
     }
+    operator = op;
+    previousInput = currentInput;
+    currentInput = '';
 }
 
-// Fungsi untuk membersihkan layar
-function clearDisplay() {
-    display.value = "0";
-}
-
-// Fungsi untuk menghapus karakter terakhir
-function backspace() {
-    display.value = display.value.slice(0, -1) || "0";
-}
-
-// Fungsi untuk melakukan kalkulasi
+// Fungsi untuk melakukan perhitungan
 function calculate() {
-    try {
-        // Salin nilai ekspresi dari layar
-        let expression = display.value;
+    const prev = parseFloat(previousInput);
+    const curr = parseFloat(currentInput);
+    if (isNaN(prev) || isNaN(curr)) return;
 
-        // Ubah ekspresi untuk kalkulasi persentase
-        expression = expression.replace(/(\d+)%/g, "($1/100)");
-
-        // Periksa apakah ekspresi valid
-        if (/^[\d+\-*/%().]+$/.test(expression)) {
-            display.value = eval(expression).toString(); // Evaluasi ekspresi
-        } else {
-            display.value = "0"; // Ekspresi tidak valid
-        }
-    } catch (error) {
-        display.value = "0"; // Tangani error
+    let result;
+    switch (operator) {
+        case '+':
+            result = prev + curr;
+            break;
+        case '-':
+            result = prev - curr;
+            break;
+        case 'x':
+            result = prev * curr;
+            break;
+        case '/':
+            result = curr === 0 ? 'Error' : prev / curr;
+            break;
+        case '%':
+            result = prev % curr;
+            break;
+        default:
+            return;
     }
+
+    currentInput = result.toString();
+    operator = null;
+    previousInput = '';
+    updateDisplay(currentInput);
 }
 
-// Tambahkan event listener untuk tombol-tombol
-document.getElementById("clear").addEventListener("click", clearDisplay);
-document.getElementById("backspace").addEventListener("click", backspace);
-document.getElementById("equals").addEventListener("click", calculate);
+// Fungsi untuk menghapus semua input
+function clearAll() {
+    currentInput = '';
+    previousInput = '';
+    operator = null;
+    updateDisplay('0');
+}
 
-// Tambahkan event listener untuk angka dan titik desimal
-["seven", "eight", "nine", "four", "five", "six", "one", "two", "three", "zero", "decimal"].forEach(id => {
-    document.getElementById(id).addEventListener("click", () => {
-        appendToDisplay(document.getElementById(id).textContent);
+// Fungsi untuk menghapus satu karakter
+function backspace() {
+    currentInput = currentInput.slice(0, -1);
+    updateDisplay(currentInput || '0');
+}
+
+// Tambahkan event listener ke tombol-tombol
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        const id = button.id;
+
+        if (id === 'clear') {
+            clearAll();
+        } else if (id === 'backspace') {
+            backspace();
+        } else if (id === 'equals') {
+            calculate();
+        } else if (id === 'add' || id === 'subtract' || id === 'multiply' || id === 'divide' || id === 'mod') {
+            chooseOperator(button.textContent === '*' ? 'x' : button.textContent);
+        } else {
+            appendNumber(button.textContent);
+        }
     });
 });
 
-// Tambahkan event listener untuk operator
-document.getElementById("add").addEventListener("click", () => appendToDisplay("+"));
-document.getElementById("subtract").addEventListener("click", () => appendToDisplay("-"));
-document.getElementById("multiply").addEventListener("click", () => appendToDisplay("*"));
-document.getElementById("divide").addEventListener("click", () => appendToDisplay("/"));
-document.getElementById("mod").addEventListener("click", () => appendToDisplay("%"));
-
-// Tambahkan dukungan keyboard
-document.addEventListener("keydown", (event) => {
+// Fungsi untuk menangani input dari keyboard
+document.addEventListener('keydown', (event) => {
     const key = event.key;
-    if (!isNaN(key) || key === ".") {
-        appendToDisplay(key);
-    } else if (["+", "-", "*", "/", "%"].includes(key)) {
-        appendToDisplay(key);
-    } else if (key === "Enter") {
+
+    if (!isNaN(key)) {
+        appendNumber(key);
+    } else if (key === '.') {
+        appendNumber(key);
+    } else if (key === '+' || key === '-' || key === 'x' || key === '/' || key === '%') {
+        chooseOperator(key);
+    } else if (key === 'Enter' || key === '=') {
         calculate();
-    } else if (key === "Backspace") {
+    } else if (key === 'Backspace') {
         backspace();
-    } else if (key === "Escape") {
-        clearDisplay();
+    } else if (key.toLowerCase() === 'c') {
+        clearAll();
     }
 });
