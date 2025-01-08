@@ -1,12 +1,13 @@
 {
   "name": "testing",
   "version": "1.0.0",
-  "description": "Kalkulator broski",
+  "description": "",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "package": "electron-packager . TestingApp --platform=win32 --arch=x64 --icon=assets/icon.ico --out=dist",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "repository": {
     "type": "git",
@@ -19,12 +20,13 @@
   },
   "homepage": "https://github.com/4raff/testing#readme",
   "devDependencies": {
-    "electron-builder": "^24.6.0",
+    "electron": "^24.0.0",
+    "electron-builder": "^24.13.3",
     "electron-packager": "^17.1.1"
   },
   "build": {
-    "appId": "com.testing.kalkulatorbroski",
-    "productName": "Kalkulator Broski",
+    "appId": "com.testing.Calculator",
+    "productName": "Calculator",
     "directories": {
       "output": "dist"
     },
@@ -32,6 +34,8 @@
       "main.js",
       "preload.js",
       "index.html",
+      "style.css",
+      "calculator.js",
       "assets/**"
     ],
     "win": {
